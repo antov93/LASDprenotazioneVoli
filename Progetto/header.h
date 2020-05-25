@@ -50,7 +50,6 @@ void stampa_grafo(grafo*g)
 {
     // da finire
     vertice*tmpV=g->lista;
-    printf("\nTEST : %s ", tmpV->citta);
     while(tmpV)
     {
         printf("\n> %s :", tmpV->citta);
@@ -61,6 +60,8 @@ void stampa_grafo(grafo*g)
 
 
 //************************************** gestione liste *****************************
+
+//************** vertice *************************
 vertice* crea_vertice(char citta[30])
 {
     vertice*v=(vertice*)malloc(sizeof(vertice));
@@ -74,15 +75,15 @@ vertice* crea_vertice(char citta[30])
     return v;
 }
 
-void inserisci_vertice_in_coda( vertice*testa, vertice*v)
+void inserisci_vertice_in_coda( vertice**testa, vertice*v) // testa<<<<<<
 {
-    if(!testa)
+    if(!(*testa) )
     {
-        testa=v;
+        *testa=v;
     }
     else
     {
-        vertice*tmp=testa;
+        vertice*tmp=*testa; //<<<<<
         while(tmp->next_vertice)
         {
             tmp=tmp->next_vertice;
@@ -98,13 +99,13 @@ void nuovo_vertice(grafo*g, char citta[30])
         errore("memoria non disponibile.");
     else
     {
-        inserisci_vertice_in_coda(g->lista,v);
+        inserisci_vertice_in_coda(&(g->lista) ,v);
         g->nv++;
     }
 }
 
 
-
+//********************* ARCO ***********************************
 arco* crea_arco(char citta_arrivo[30], int distanza, float costo)
 {
     arco*a=(arco*)malloc(sizeof(arco));

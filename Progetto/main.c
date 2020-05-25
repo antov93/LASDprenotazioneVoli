@@ -13,6 +13,9 @@ void main()
     nuovo_vertice(g, "Roma");
     nuovo_vertice(g, "Milano");
 
+    nuovo_arco(g, "Napoli", "Roma",   200, 50);
+    nuovo_arco(g, "Napoli", "Milano", 700, 150);
+    nuovo_arco(g, "Milano", "Napoli", 700, 150);
 
 
     stampa_grafo(g);

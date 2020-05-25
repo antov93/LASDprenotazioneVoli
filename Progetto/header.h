@@ -8,13 +8,14 @@ typedef struct arco
     char citta_arrivo[30];
     int distanza;   // peso
     float costo;    // peso
-    struct nodo*next_arco;
+    struct arco*next_arco;
 } arco;
 
 typedef struct vertice
 {
     char citta[30];
     struct vertice*next_vertice; // puntatore al prossimo vertice
+    struct arco*next_arco;
 } vertice;
 
 typedef struct grafo
@@ -50,9 +51,16 @@ void stampa_grafo(grafo*g)
 {
     // da finire
     vertice*tmpV=g->lista;
+    arco*tmpA;
     while(tmpV)
     {
         printf("\n> %s :", tmpV->citta);
+        tmpA=tmpV->next_arco;
+        while(tmpA)
+        {
+            printf(" > %s ", tmpA->citta_arrivo);
+            tmpA=tmpA->next_arco;
+        }
         tmpV=tmpV->next_vertice;
     }
     free(tmpV);
@@ -70,6 +78,7 @@ vertice* crea_vertice(char citta[30])
     else
     {
         v->next_vertice=NULL;
+        v->next_arco=NULL;
         strcpy(v->citta, citta);
     }
     return v;
@@ -83,7 +92,7 @@ void inserisci_vertice_in_coda( vertice**testa, vertice*v) // testa<<<<<<
     }
     else
     {
-        vertice*tmp=*testa; //<<<<<
+        vertice*tmp=*testa;     //<<<<<
         while(tmp->next_vertice)
         {
             tmp=tmp->next_vertice;
@@ -99,7 +108,7 @@ void nuovo_vertice(grafo*g, char citta[30])
         errore("memoria non disponibile.");
     else
     {
-        inserisci_vertice_in_coda(&(g->lista) ,v);
+        inserisci_vertice_in_coda(&(g->lista),v);
         g->nv++;
     }
 }
@@ -121,15 +130,47 @@ arco* crea_arco(char citta_arrivo[30], int distanza, float costo)
     return a;
 }
 
-void inserisci_arco_in_coda(arco*n)
+void inserisci_arco_in_coda(vertice*vert, arco*a)  //  <<<<<< FUNZIONE SBAGLIATA <<<<<
 {
-
+   if(vert->next_arco == NULL )
+   {
+       vert->next_arco=a;
+   }
+   else
+   {
+       arco*tmp=vert->next_arco;
+       while(tmp->next_arco)
+       {
+           tmp=tmp->next_arco;
+       }
+       tmp->next_arco=a;
+   }
 
 }
 
+vertice* cerca_vertice(vertice*lista, char citta[30])  // ?????
+{
+    vertice*v=lista;
+    if(v != NULL && strcmp(v->citta, citta) != 0  ) // non trovato
+    {
+        v = cerca_vertice(lista->next_vertice, citta);
+    }
+    return v;
+}
 
 void nuovo_arco(grafo*g,char citta_partenza[30], char citta_arrivo[30], int distanza, float costo)
 {
+    // FARE CONTROLLI
+    arco*a=crea_arco(citta_arrivo, distanza, costo);
+    if(!a)
+    {
+        errore("memoria non disponibile.");
+    }
+    else
+    {
+        vertice*vert=cerca_vertice(g->lista, citta_partenza);
+        inserisci_arco_in_coda( vert, a );
+    }
 
 }
 

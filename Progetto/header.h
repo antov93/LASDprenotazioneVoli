@@ -49,7 +49,6 @@ grafo*nuovo_grafo()  // si alloca un nuovo grafo, senza vertici e senza archi
 
 void stampa_grafo(grafo*g)
 {
-    // da finire
     vertice*tmpV=g->lista;
     arco*tmpA;
     while(tmpV)
@@ -84,7 +83,7 @@ vertice* crea_vertice(char citta[30])
     return v;
 }
 
-void inserisci_vertice_in_coda( vertice**testa, vertice*v) // testa<<<<<<
+void inserisci_vertice_in_coda( vertice**testa, vertice*v)
 {
     if(!(*testa) )
     {
@@ -92,7 +91,7 @@ void inserisci_vertice_in_coda( vertice**testa, vertice*v) // testa<<<<<<
     }
     else
     {
-        vertice*tmp=*testa;     //<<<<<
+        vertice*tmp=*testa;
         while(tmp->next_vertice)
         {
             tmp=tmp->next_vertice;
@@ -130,7 +129,7 @@ arco* crea_arco(char citta_arrivo[30], int distanza, float costo)
     return a;
 }
 
-void inserisci_arco_in_coda(vertice*vert, arco*a)  //  <<<<<< FUNZIONE SBAGLIATA <<<<<
+void inserisci_arco_in_coda(vertice*vert, arco*a)
 {
    if(vert->next_arco == NULL )
    {
@@ -148,7 +147,7 @@ void inserisci_arco_in_coda(vertice*vert, arco*a)  //  <<<<<< FUNZIONE SBAGLIATA
 
 }
 
-vertice* cerca_vertice(vertice*lista, char citta[30])  // ?????
+vertice* cerca_vertice(vertice*lista, char citta[30])
 {
     vertice*v=lista;
     if(v != NULL && strcmp(v->citta, citta) != 0  ) // non trovato
@@ -161,6 +160,7 @@ vertice* cerca_vertice(vertice*lista, char citta[30])  // ?????
 void nuovo_arco(grafo*g,char citta_partenza[30], char citta_arrivo[30], int distanza, float costo)
 {
     // FARE CONTROLLI
+
     arco*a=crea_arco(citta_arrivo, distanza, costo);
     if(!a)
     {

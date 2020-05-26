@@ -1,2 +1,0 @@
-# LASDprenotazioneVoli
-Gestione prenotazione voli

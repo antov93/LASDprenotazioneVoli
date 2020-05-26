@@ -49,15 +49,17 @@ grafo*nuovo_grafo()  // si alloca un nuovo grafo, senza vertici e senza archi
 
 void stampa_grafo(grafo*g)
 {
+    // da finire
     vertice*tmpV=g->lista;
     arco*tmpA;
+    printf("\nPartenze:\t\t\tDestinazioni\n\n");
     while(tmpV)
     {
-        printf("\n> %s :", tmpV->citta);
+        printf("\n %s :\t\t\t", tmpV->citta);
         tmpA=tmpV->next_arco;
         while(tmpA)
         {
-            printf(" > %s ", tmpA->citta_arrivo);
+            printf("> %s ", tmpA->citta_arrivo);
             tmpA=tmpA->next_arco;
         }
         tmpV=tmpV->next_vertice;
@@ -66,10 +68,8 @@ void stampa_grafo(grafo*g)
 }
 
 
-
-
-
 //************************************** gestione liste *****************************
+
 //************** vertice *************************
 vertice* crea_vertice(char citta[30])
 {
@@ -85,7 +85,7 @@ vertice* crea_vertice(char citta[30])
     return v;
 }
 
-void inserisci_vertice_in_coda( vertice**testa, vertice*v)
+void inserisci_vertice_in_coda( vertice**testa, vertice*v) // testa<<<<<<
 {
     if(!(*testa) )
     {
@@ -93,7 +93,7 @@ void inserisci_vertice_in_coda( vertice**testa, vertice*v)
     }
     else
     {
-        vertice*tmp=*testa;
+        vertice*tmp=*testa;     //<<<<<
         while(tmp->next_vertice)
         {
             tmp=tmp->next_vertice;
@@ -115,6 +115,8 @@ void nuovo_vertice(grafo*g, char citta[30])
 }
 
 
+
+
 //********************* ARCO ***********************************
 arco* crea_arco(char citta_arrivo[30], int distanza, float costo)
 {
@@ -131,7 +133,7 @@ arco* crea_arco(char citta_arrivo[30], int distanza, float costo)
     return a;
 }
 
-void inserisci_arco_in_coda(vertice*vert, arco*a)
+void inserisci_arco_in_coda(vertice*vert, arco*a)  //  <<<<<< FUNZIONE SBAGLIATA <<<<<
 {
    if(vert->next_arco == NULL )
    {
@@ -149,7 +151,7 @@ void inserisci_arco_in_coda(vertice*vert, arco*a)
 
 }
 
-vertice* cerca_vertice(vertice*lista, char citta[30])
+vertice* cerca_vertice(vertice*lista, char citta[30])  // ?????
 {
     vertice*v=lista;
     if(v != NULL && strcmp(v->citta, citta) != 0  ) // non trovato
@@ -162,7 +164,6 @@ vertice* cerca_vertice(vertice*lista, char citta[30])
 void nuovo_arco(grafo*g,char citta_partenza[30], char citta_arrivo[30], int distanza, float costo)
 {
     // FARE CONTROLLI
-
     arco*a=crea_arco(citta_arrivo, distanza, costo);
     if(!a)
     {
@@ -176,6 +177,13 @@ void nuovo_arco(grafo*g,char citta_partenza[30], char citta_arrivo[30], int dist
 
 }
 
+//TRATTA ECONOMICA
+grafo* tratta_economica(grafo* g, char citta_partenza[]){
+
+    if(cerca_vertice(g,citta_partenza)){
+
+    }
+}
 
 
 

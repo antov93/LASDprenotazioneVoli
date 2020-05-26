@@ -192,6 +192,7 @@ void nuovo_arco(grafo*g,char citta_partenza[30], char citta_arrivo[30], int dist
     }
 
 }
+<<<<<<< HEAD
 
 //TRATTA ECONOMICA
 grafo* tratta_economica(grafo* g, char citta_partenza[])
@@ -216,6 +217,30 @@ void leggi_file_vertici(grafo*g)
         nuovo_vertice(g, citta);
     }
     fclose(fp);
+=======
+
+//TRATTA ECONOMICA
+char* meta_economica(grafo* g, char citta_partenza[], char* p){
+
+    int minimo = 1000.0;
+    vertice*tmpV=g->lista;
+
+    tmpV=cerca_vertice(g->lista,citta_partenza);
+    if(tmpV != NULL){
+        arco*tmpA;
+        tmpA=tmpV->next_arco;
+            while(tmpA)
+            {
+                if(minimo > tmpA->costo){
+                    minimo = tmpA->costo;
+                    strcpy(p, tmpA->citta_arrivo);
+                }
+                tmpA=tmpA->next_arco;
+            }
+
+            return p;
+    }
+>>>>>>> 297c391fe0b2717eec63c3ffa26d4d82fd820ce1
 }
 
 

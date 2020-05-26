@@ -178,10 +178,25 @@ void nuovo_arco(grafo*g,char citta_partenza[30], char citta_arrivo[30], int dist
 }
 
 //TRATTA ECONOMICA
-grafo* tratta_economica(grafo* g, char citta_partenza[]){
+char* meta_economica(grafo* g, char citta_partenza[], char* p){
 
-    if(cerca_vertice(g,citta_partenza)){
+    int minimo = 1000.0;
+    vertice*tmpV=g->lista;
 
+    tmpV=cerca_vertice(g->lista,citta_partenza);
+    if(tmpV != NULL){
+        arco*tmpA;
+        tmpA=tmpV->next_arco;
+            while(tmpA)
+            {
+                if(minimo > tmpA->costo){
+                    minimo = tmpA->costo;
+                    strcpy(p, tmpA->citta_arrivo);
+                }
+                tmpA=tmpA->next_arco;
+            }
+
+            return p;
     }
 }
 

@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<ctype.h>
 #include"header.h"
 
 grafo* inizializza(grafo*g); //riempe il grafo
@@ -12,6 +13,7 @@ void main()
     int scelta; //scelta dal menù
     char destinazione;
     char citta_partenza[20];
+    char citta_economica[20];
     char* p;
     grafo*g=nuovo_grafo();
     g=inizializza(g);
@@ -31,23 +33,33 @@ void main()
             case 1:
                  stampa_grafo(g);
                  continua();
-                 system("cls");
                  break;
             case 2:
                  break;
             case 3:
                 printf("\nInserire la citta' di partenza: ");
                 scanf("%s", citta_partenza);
-                p=normalizza_parola(citta_partenza);
-                printf("\nVuoi inserire la destinazione? S/N");
-                scanf("%c", &destinazione);
-                    if(destinazione == 'S'){
+                normalizza_parola(citta_partenza);
+                    if(cerca_vertice(g->lista,citta_partenza)){ // se la città è presente...
+                        /*chiediamo all'utente se vuole inserire destinazioni*/
+                        while(destinazione != 'N' && destinazione != 'Y'){
+                            printf("\nVuoi inserire la destinazione? Y/N\n");
+                            scanf(" %c", &destinazione);
+                            destinazione = toupper(destinazione);
+                        }
 
-                    }else if(destinazione =='N'){
-                        printf("\nDa %s la tratta piu' economica e' %s, approfittane!", citta_partenza, tratta_economica(g, citta_partenza));
+                        if(destinazione == 'Y'){
+
+                        }else if(destinazione == 'N'){
+                            meta_economica(g, citta_partenza, citta_economica);
+                            printf("\nDa %s la meta piu' economica e' %s, approfittane!", citta_partenza,citta_economica);
+                        }
+
+                        destinazione = 'Z'; //rinizializziamo la variabile destinazione
+                    }else{//...altrimenti
+                        printf("\nNon esistono partenze da %s", citta_partenza);
                     }
                 continua();
-                system("cls");
                 break;
             case 4:
                 printf("\nArrivederci!");
@@ -55,9 +67,6 @@ void main()
                 break;
         }
     }
-
-
-    stampa_grafo(g);
 
     printf("\n\n*** FINE ***");
 }
@@ -118,6 +127,7 @@ void continua(){
     char tasto;
     printf("\n\nPremere un tasto per continuare...\n");
     scanf("%s",&tasto);
+    system("cls");
 }
 
 char* normalizza_parola(char* p){

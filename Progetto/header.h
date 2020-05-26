@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 
-
+//************************ tipi*********************************
 typedef struct arco
 {
     char citta_arrivo[30];
@@ -23,6 +23,26 @@ typedef struct grafo
     int nv;        // numero vertici
     vertice*lista; // puntatore al primo vertice
 } grafo;
+
+typedef struct utente
+{
+    char username[20];
+    char password[20];
+    int punti;
+    char nome[20];
+    char cognome[20];
+
+} utente;
+
+
+//***************************** PROTOTIPI   *****************************************
+
+
+
+void nuovo_arco(grafo*g,char citta_partenza[30], char citta_arrivo[30], int distanza, float costo);
+
+
+
 
 
 void errore(char messaggio[50])
@@ -49,13 +69,12 @@ grafo*nuovo_grafo()  // si alloca un nuovo grafo, senza vertici e senza archi
 
 void stampa_grafo(grafo*g)
 {
-    // da finire
     vertice*tmpV=g->lista;
     arco*tmpA;
     printf("\nPartenze:\t\t\tDestinazioni\n\n");
     while(tmpV)
     {
-        printf("\n %s :\t\t\t", tmpV->citta);
+        printf("\n %-30s ", tmpV->citta);
         tmpA=tmpV->next_arco;
         while(tmpA)
         {
@@ -69,7 +88,6 @@ void stampa_grafo(grafo*g)
 
 
 //************************************** gestione liste *****************************
-
 //************** vertice *************************
 vertice* crea_vertice(char citta[30])
 {
@@ -115,8 +133,6 @@ void nuovo_vertice(grafo*g, char citta[30])
 }
 
 
-
-
 //********************* ARCO ***********************************
 arco* crea_arco(char citta_arrivo[30], int distanza, float costo)
 {
@@ -133,25 +149,25 @@ arco* crea_arco(char citta_arrivo[30], int distanza, float costo)
     return a;
 }
 
-void inserisci_arco_in_coda(vertice*vert, arco*a)  //  <<<<<< FUNZIONE SBAGLIATA <<<<<
+void inserisci_arco_in_coda(vertice*vert, arco*a)
 {
-   if(vert->next_arco == NULL )
-   {
-       vert->next_arco=a;
-   }
-   else
-   {
-       arco*tmp=vert->next_arco;
-       while(tmp->next_arco)
-       {
-           tmp=tmp->next_arco;
-       }
-       tmp->next_arco=a;
-   }
+    if(vert->next_arco == NULL )
+    {
+        vert->next_arco=a;
+    }
+    else
+    {
+        arco*tmp=vert->next_arco;
+        while(tmp->next_arco)
+        {
+            tmp=tmp->next_arco;
+        }
+        tmp->next_arco=a;
+    }
 
 }
 
-vertice* cerca_vertice(vertice*lista, char citta[30])  // ?????
+vertice* cerca_vertice(vertice*lista, char citta[30])
 {
     vertice*v=lista;
     if(v != NULL && strcmp(v->citta, citta) != 0  ) // non trovato
@@ -178,15 +194,51 @@ void nuovo_arco(grafo*g,char citta_partenza[30], char citta_arrivo[30], int dist
 }
 
 //TRATTA ECONOMICA
-grafo* tratta_economica(grafo* g, char citta_partenza[]){
+grafo* tratta_economica(grafo* g, char citta_partenza[])
+{
 
-    if(cerca_vertice(g,citta_partenza)){
-
-    }
 }
 
 
 
+//******************************* FILE *******************************
+
+void leggi_file_vertici(grafo*g)
+{
+    char citta[30];
+    FILE*fp=fopen("Vertici.txt", "r");
+    if(!fp)
+        errore("impossibile aprire il file vertici.");
+
+    while(!feof(fp))
+    {
+        fscanf(fp, "%30s\n", &citta);
+        nuovo_vertice(g, citta);
+    }
+    fclose(fp);
+}
+
+
+void leggi_file_archi(grafo*g)
+{
+    int distanza;
+    float costo;
+    char citta_partenza[30], citta_arrivo[30];
+    FILE*fp=fopen("Archi.txt", "r");
+    if(!fp)
+        errore("impossibile aprire il file archi.");
+    while(!feof(fp))
+    {
+        fscanf(fp, "%30s %30s %f %d\n", citta_partenza ,citta_arrivo, &costo, &distanza );
+        nuovo_arco(g, citta_partenza, citta_arrivo, distanza, costo );
+    }
+    fclose(fp);
+}
+
+void leggi_file_utenti(char username[], char password[])
+{
+
+}
 
 
 

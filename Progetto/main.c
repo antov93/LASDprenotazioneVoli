@@ -63,12 +63,12 @@ int richiedi_intero()
     return valore;
 }
 
-char* richiedi_nome_citta()
+char** richiedi_nome_citta()  // sbagliata
 {
-    char nome_citta[30];
+    char *nome_citta;
     scanf("%s ", nome_citta);
     normalizza_parola(nome_citta);
-    return nome_citta;
+    return *nome_citta;
 
 }
 

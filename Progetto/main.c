@@ -63,23 +63,16 @@ int richiedi_intero()
     return valore;
 }
 
-char** richiedi_nome_citta()  // sbagliata
+void richiedi_nome_citta(char nome[])
 {
-    char *nome_citta;
-    scanf("%s ", nome_citta);
-    normalizza_parola(nome_citta);
-    return *nome_citta;
-
+    printf("\n> ");
+    scanf("%29s",nome );
+    normalizza_parola(nome);
 }
 
 char richiedi_Y_N()
 {
-    char scelta;
-    do
-    {
-        scanf("%c ", &scelta);
-    }while( scelta!='Y'|| scelta!='y'|| scelta!='N'||scelta!='n');
-    scelta=toupper(scelta);
+
 }
 
 //************************************************************************+
@@ -151,8 +144,8 @@ void main()
 {
     int scelta;
     char destinazione;
-    char citta_partenza[20];
-    char citta_economica[20];
+    char citta_partenza[30];
+    char citta_economica[30];
     char* p;
 
     grafo*g=nuovo_grafo();

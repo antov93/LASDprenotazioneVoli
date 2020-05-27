@@ -228,7 +228,7 @@ void leggi_file_archi(grafo*g)
         errore("impossibile aprire il file archi.");
     while(!feof(fp))
     {
-        fscanf(fp, "%30s %30s %f %d\n", citta_partenza ,citta_arrivo, &costo, &distanza );
+        fscanf(fp, "%30s %30s %f %d\n", citta_partenza,citta_arrivo, &costo, &distanza );
         nuovo_arco(g, citta_partenza, citta_arrivo, distanza, costo );
     }
     fclose(fp);
@@ -242,23 +242,61 @@ void leggi_file_utenti(char username[], char password[])
 
 //**********+
 //TRATTA ECONOMICA
-char* meta_economica(grafo* g, char citta_partenza[], char* p){
+char* meta_economica(grafo* g, char citta_partenza[], char* p)
+{
 
     int minimo = 1000.0;
     vertice*tmpV=g->lista;
 
     tmpV=cerca_vertice(g->lista,citta_partenza);
-    if(tmpV != NULL){
+    if(tmpV != NULL)
+    {
         arco*tmpA;
         tmpA=tmpV->next_arco;
-            while(tmpA)
+        while(tmpA)
+        {
+            if(minimo > tmpA->costo)
             {
-                if(minimo > tmpA->costo){
-                    minimo = tmpA->costo;
-                    strcpy(p, tmpA->citta_arrivo);
-                }
-                tmpA=tmpA->next_arco;
+                minimo = tmpA->costo;
+                strcpy(p, tmpA->citta_arrivo);
             }
+            tmpA=tmpA->next_arco;
+        }
 
-            return p;
+        return p;
     }
+}
+
+
+arco* meta_piu_econimica(grafo*g, char citta_partenza[])
+{
+    if(!g || g->nv==0)
+    {
+        errore("nessuna citta' disponibile");
+    }
+    vertice*vert=cerca_vertice(g->lista, citta_partenza);
+    if(!vert)
+    {
+        errore("citta' non trovata.");
+    }
+    if(vert->next_arco==NULL)
+    {
+        errore("nessun aereo disponibile.");
+    }
+    arco*minimo=vert->next_arco;
+    arco*tmp=vert->next_arco;
+    while(tmp)
+    {
+        if(tmp->costo < minimo->costo)
+        {
+            minimo=tmp;
+        }
+        tmp=tmp->next_arco;
+    }
+
+    printf("\nLa meta piu' econimica che si puo' raggiungere e' : %s  con un costo di %.2f Euro", minimo->citta_arrivo, minimo->costo);
+    return minimo;
+}
+
+
+

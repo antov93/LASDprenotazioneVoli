@@ -31,17 +31,20 @@ void inizializza(grafo* g)
     leggi_file_archi(g);
 }
 
-void continua(){
+void continua()
+{
     char tasto;
     printf("\n\nPremere un tasto per continuare...\n");
     scanf("%s",&tasto);
     system("cls");
 }
 
-char* normalizza_parola(char* p){
+char* normalizza_parola(char* p)
+{
 
     p[0] = toupper(p[0]);
-    for(int i=1; i<strlen(p); i++){
+    for(int i=1; i<strlen(p); i++)
+    {
         p[i] = tolower(p[i]);
     }
 
@@ -75,14 +78,16 @@ char richiedi_Y_N()
     char scelta;
     do
     {
-        printf("\n> ");
+        fflush(stdin);
+        printf("\n\nY=yes\nN=no\n> ");
         scelta=getchar();
         scelta=toupper(scelta);
         if(scelta!='Y' && scelta!='N')
-            printf("\nNon valido.");
-        fflush(stdin);
+            printf("Non valido.");
 
-    } while(scelta!='Y' && scelta!='N');
+    }
+    while(scelta!='Y' && scelta!='N');
+
     return scelta;
 }
 
@@ -154,59 +159,79 @@ char richiedi_Y_N()
 void main()
 {
     int scelta;
-    char destinazione;
+    char scelta_Y_N;
     char citta_partenza[30];
-    char citta_economica[30];
-    char* p;
+    char citta_arrivo[30];
+    char citta_economica[30]; // ???
+    char* p;   // ????
 
     grafo*g=nuovo_grafo();
     inizializza(g);
 
-    while(1){
-
-
+    while(1)
+    {
         stampa_menu();
         scelta=richiedi_intero();
-        continua();
-//        system("cls");
+        system("cls");
 
+        switch (scelta)
+        {
+        case 1:
+            stampa_grafo(g);
+            continua();
+            break;
+        case 2:
+            break;
+        case 3:
+            printf("\nInserire la citta' di partenza: ");
+            richiedi_nome_citta(citta_partenza);
+            if(cerca_vertice(g->lista, citta_partenza)==NULL)
+                errore("la citta non esiste.");
 
-         switch (scelta){
-            case 1:
-                 stampa_grafo(g);
-                 continua();
-                 break;
-            case 2:
-                 break;
-            case 3:
-                printf("\nInserire la citta' di partenza: ");
-                scanf("%s", citta_partenza);
-                normalizza_parola(citta_partenza);
-                    if(cerca_vertice(g->lista,citta_partenza)){ // se la città è presente...
-                        /*chiediamo all'utente se vuole inserire destinazioni*/
-                        while(destinazione != 'N' && destinazione != 'Y'){
-                            printf("\nVuoi inserire la destinazione? Y/N\n");
-                            scanf(" %c", &destinazione);
-                            destinazione = toupper(destinazione);
-                        }
+            printf("\nVuoi inserire una destinazione ? ");
+            scelta_Y_N=richiedi_Y_N();
+            if(scelta_Y_N == 'Y')
+            {
+                richiedi_nome_citta(citta_arrivo);
+                if(!cerca_vertice(g->lista, citta_arrivo))
+                {
+                    printf("\nCitta' non trovata.");
+                }
 
-                        if(destinazione == 'Y'){
+                // continua...
 
-                        }else if(destinazione == 'N'){
-                            meta_economica(g, citta_partenza, citta_economica);
-                            printf("\nDa %s la meta piu' economica e' %s, approfittane!", citta_partenza,citta_economica);
-                        }
-
-                        destinazione = 'Z'; //rinizializziamo la variabile destinazione
-                    }else{//...altrimenti
-                        printf("\nNon esistono partenze da %s", citta_partenza);
+            } // FINE YES
+            else if(scelta_Y_N == 'N')
+            {
+                do
+                {
+                    printf("\nCosa vuoi sapere : \n1->meta piu' econimica\n2->meta piu' gettonata\n0->annulla\n> ");
+                    scelta=richiedi_intero();
+                    switch(scelta)
+                    {
+                    case 0:
+                        break;
+                    case 1:
+                        meta_piu_econimica(g, citta_partenza);
+                        break;
+                    case 2:
+                        //meta_piu_gettonata()
+                        break;
+                    default:
+                        printf("\nScelta non valida ! ");
+                        continue;
                     }
-                continua();
-                break;
-            case 4:
-                printf("\nArrivederci!");
-                exit(0);
-                break;
+                    break;
+                }
+                while (1);
+            }
+
+            continua();
+            break;
+        case 4:
+            printf("\nArrivederci!");
+            exit(0);
+            break;
         }
     }
 

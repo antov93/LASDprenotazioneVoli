@@ -72,7 +72,18 @@ void richiedi_nome_citta(char nome[])
 
 char richiedi_Y_N()
 {
+    char scelta;
+    do
+    {
+        printf("\n> ");
+        scelta=getchar();
+        scelta=toupper(scelta);
+        if(scelta!='Y' && scelta!='N')
+            printf("\nNon valido.");
+        fflush(stdin);
 
+    } while(scelta!='Y' && scelta!='N');
+    return scelta;
 }
 
 //************************************************************************+

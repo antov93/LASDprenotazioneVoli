@@ -4,238 +4,320 @@
 #include<ctype.h>
 #include"header.h"
 
+grafo* inizializza(grafo*g); //riempe il grafo
+void continua(); //chiede di premere un tasto per continuare
+char* normalizza_parola(char* p); //rende la prima lettera maiuscola e le restanti minuscole
+prenotazioni* attive(char utente[], prenotazioni* p);
 
-
-
-//int richiedi_intero();
-//void stampa_menu();
-//void inizializza(grafo* g);
-//void continua();
-//char* normalizza_parola(char* p);
-
-//***********************************************************++
-
-
-void stampa_menu()
+void main()
 {
-    printf("\nSELEZIONA UN OPZIONE\n");
-    printf("\n1.Visualizza i voli");
-    printf("\n2.Visualizza le prenotazioni attive");
-    printf("\n3.Effettua una nuova prenotazione");
-    printf("\n4.ESCI\n");
+    int scelta; //scelta dal menù
+    int scelta_login;
+    char destinazione;
+    char citta_partenza[20];
+    char citta_economica[20];
+    char citta_arrivo[20];
+    char* p;
+    char username[20];
+    char password[20] = {"nulla"};
+    char confronto_password[20] = {"niente"}; //stringa di confronto password
+    char utente[40];
+    int confermato;
+    int k; //indice stringa username
+    grafo*g=nuovo_grafo();
+    prenotazioni* lista_prenotazioni = NULL;
+
+    g=inizializza(g);
+
+while(confermato != 1){
+    printf("\nLOGIN");
+    printf("\n1.Effettua il login");
+    printf("\n2.Registrati");
+    printf("\n3.Entra come visitatore\n");
+    scanf("%d", &scelta_login);
+
+    if(scelta_login == 1){
+        printf("\nInserire username: \n");
+        scanf("%s", username);
+        k = strlen(username);
+        username[k] = '-';
+        username[k+1] = '\0';
+        printf("\nInserire password: \n");
+        scanf("%s", password);
+        strcat(username,password);
+        confermato = conferma_login(username);
+        if(confermato == 0){
+            printf("\nDati errati, riprova!");
+        }else{
+            printf("\nDati corretti!");
+        }
+    }else if(scelta_login == 2){
+        while(strcmp(password, confronto_password) != 0){
+            printf("\nScegliere l'username: \n");
+            scanf("%s", username);
+            k=strlen(username);
+            username[k] = '-';
+            username[k+1] = '\0';
+            printf("\nScegliere una password: \n");
+            scanf("%s", password);
+            printf("\nRipetere password: \n");
+            scanf("%s", confronto_password);
+
+            if(strcmp(password,confronto_password) == 0){
+                strcat(username,password);
+                registra_utente(username);
+                strcpy(password, confronto_password);
+            }else{
+                printf("\nConfronto password errato, ripetere!\n");
+            }
+        } //fine while
+    }else if(scelta_login == 3){
+        confermato = 1;
+    }
+
+    continua();
+} //fine while
+
+/*OPZIONI DI MENU' A SECONDA DELL'UTENTE*/
+if(scelta_login == 3){
+    while(1){
+        printf("\nSELEZIONA UN OPZIONE\n");
+        printf("\n1.Visualizza i voli");
+        printf("\n2.ESCI\n");
+
+        scanf("%d", &scelta);
+        system("cls");
+
+         switch (scelta){
+            case 1:
+                 stampa_grafo(g);
+                 continua();
+                 break;
+            case 2:
+                printf("\nArrivederci!");
+                exit(0);
+                break;
+        }
+    }
+}else if(scelta_login == 1){
+    while(1){
+        printf("\nSELEZIONA UN OPZIONE\n");
+        printf("\n1.Visualizza i voli");
+        printf("\n2.Visualizza le prenotazioni attive");
+        printf("\n3.Effettua una nuova prenotazione");
+        printf("\n4.ESCI\n");
+
+        scanf("%d", &scelta);
+        system("cls");
+
+         switch (scelta){
+            case 1:
+                 stampa_grafo(g);
+                 continua();
+                 break;
+            case 2:
+                 lista_prenotazioni=attive(username,lista_prenotazioni);
+                 printf("\nPRENOTAZIONI ATTIVE:\n");
+                 stampa_prenotazioni(lista_prenotazioni);
+                 continua();
+                 break;
+            case 3:
+                printf("\nInserire la citta' di partenza: ");
+                scanf("%s", citta_partenza);
+                normalizza_parola(citta_partenza);
+                    if(cerca_vertice(g->lista,citta_partenza)){ // se la città è presente...
+                        /*chiediamo all'utente se vuole inserire destinazioni*/
+                        while(destinazione != 'N' && destinazione != 'Y'){
+                            printf("\nVuoi inserire la destinazione? Y/N\n");
+                            scanf(" %c", &destinazione);
+                            destinazione = toupper(destinazione);
+                        }
+
+                        if(destinazione == 'N'){
+                            meta_economica(g, citta_partenza, citta_economica);
+                            printf("\nDa %s la meta piu' economica e' %s, approfittane!", citta_partenza,citta_economica);
+                        }
+
+                        printf("\nInserisci la destinazione: ");
+                        scanf("%s", citta_arrivo);
+                        normalizza_parola(citta_arrivo);
+                        if(cerca_arco(cerca_vertice(g->lista,citta_partenza),citta_arrivo)){
+                            registra_prenotazione(username, citta_partenza,citta_arrivo);
+                        }else{
+                            printf("\nNon esistono voli da %s a %s!", citta_partenza, citta_arrivo);
+                        }
+
+                        destinazione = 'Z'; //rinizializziamo la variabile destinazione
+                    }else{//...altrimenti
+                        printf("\nNon esistono partenze da %s", citta_partenza);
+                    }
+                continua();
+                break;
+            case 4:
+                printf("\nArrivederci!");
+                exit(0);
+                break;
+        }
+    }
+} //fine if-else
 }
 
-void inizializza(grafo* g)
-{
-    leggi_file_vertici(g);
-    leggi_file_archi(g);
+grafo* inizializza(grafo* g){
+    nuovo_vertice(g, "Napoli");
+    nuovo_vertice(g, "Roma");
+    nuovo_vertice(g, "Milano");
+    nuovo_vertice(g, "Verona");
+    nuovo_vertice(g, "Barcellona");
+    nuovo_vertice(g, "Madrid");
+    nuovo_vertice(g, "Amsterdam");
+    nuovo_vertice(g, "Pisa");
+    nuovo_vertice(g, "Parigi");
+    nuovo_vertice(g, "Londra");
+    nuovo_vertice(g, "Bari");
+    nuovo_vertice(g, "Piacenza");
+    nuovo_vertice(g, "Mosca");
+    nuovo_vertice(g, "Bruxelles");
+    nuovo_vertice(g, "Helsinki");
+    nuovo_vertice(g, "Tokyo");
+    nuovo_vertice(g, "Montecarlo");
+    nuovo_vertice(g, "Edimburgo");
+    nuovo_vertice(g, "Stoccolma");
+    nuovo_vertice(g, "Dublino");
+
+    nuovo_arco(g, "Napoli", "Roma",   200, 20.0);
+    nuovo_arco(g, "Roma", "Napoli",   200, 20.0);
+    nuovo_arco(g, "Napoli", "Milano", 700, 50.0);
+    nuovo_arco(g, "Milano", "Napoli",   700, 20.0);
+    nuovo_arco(g, "Verona", "Barcellona", 1100, 100.0);
+    nuovo_arco(g, "Barcellona", "Verona", 1100, 100.0);
+    nuovo_arco(g, "Helsinki", "Montecarlo",   2800, 200.0);
+    nuovo_arco(g, "Montecarlo", "Helsinki",   2800, 200.0);
+    nuovo_arco(g, "Bruxelles", "Helsinki", 700, 50.0);
+    nuovo_arco(g, "Helsinki", "Bruxelles", 700, 50.0);
+    nuovo_arco(g, "Mosca", "Tokyo", 7500, 100.0);
+    nuovo_arco(g, "Tokyo", "Mosca", 7500, 100.0);
+    nuovo_arco(g, "Napoli", "Barcellona",   1500, 80.0);
+    nuovo_arco(g, "Barcellona", "Napoli",   1500, 80.0);
+    nuovo_arco(g, "Amsterdam", "Milano", 1070, 90.0);
+    nuovo_arco(g, "Milano", "Amsterdam", 1070, 90.0);
+    nuovo_arco(g, "Milano", "Bruxelles", 800, 50.0);
+    nuovo_arco(g, "Bruxelles", "Milano", 800, 50.0);
+    nuovo_arco(g, "Napoli", "Dublino", 2600, 150.0);
+    nuovo_arco(g, "Dublino", "Napoli", 2600, 150.0);
+    nuovo_arco(g, "Stoccolma", "Edimburgo", 2500, 180.0);
+    nuovo_arco(g, "Edimburgo", "Stoccolma", 2500, 180.0);
+    nuovo_arco(g, "Londra", "Parigi", 470, 50.0);
+    nuovo_arco(g, "Parigi", "Londra", 470, 50.0);
+    nuovo_arco(g, "Londra", "Napoli", 2000, 100.0);
+    nuovo_arco(g, "Napoli", "Londra", 2000, 100.0);
+
+    return g;
 }
 
-void continua()
-{
+void continua(){
     char tasto;
     printf("\n\nPremere un tasto per continuare...\n");
     scanf("%s",&tasto);
     system("cls");
 }
 
-char* normalizza_parola(char* p)
-{
+char* normalizza_parola(char* p){
 
     p[0] = toupper(p[0]);
-    for(int i=1; i<strlen(p); i++)
-    {
+    for(int i=1; i<strlen(p); i++){
         p[i] = tolower(p[i]);
     }
 
     return p;
 }
 
+int conferma_login(char utente[]){
+
+	int i=0,j=0;
+	FILE *fp;
+	char lettura[20][20];
+	int dim;
+
+	fp=fopen("utenti.txt","r"); //apro il file in lettura
+	if(fp){
+		while(!feof(fp)){
+
+			fscanf(fp, "%s", lettura[i]);
+			i++;
+
+		}//fine while della lettura file
+
+	}else{
+		printf("Errore apertura file!");
+	 }//fine controllo esistenza file
+
+	fclose(fp);
 
 
-
-
-int richiedi_intero()
-{
-    int valore;
-    while(scanf("%d", &valore)!= 1)
-    {
-        printf("\nValore non valido. Inserirne un altro.");
-        fflush(stdin);
-    }
-    return valore;
-}
-
-void richiedi_nome_citta(char nome[])
-{
-    printf("\n> ");
-    scanf("%29s",nome );
-    normalizza_parola(nome);
-}
-
-char richiedi_Y_N()
-{
-    char scelta;
-    do
-    {
-        fflush(stdin);
-        printf("\n\nY=yes\nN=no\n> ");
-        scelta=getchar();
-        scelta=toupper(scelta);
-        if(scelta!='Y' && scelta!='N')
-            printf("Non valido.");
-
-    }
-    while(scelta!='Y' && scelta!='N');
-
-    return scelta;
-}
-
-//************************************************************************+
-
-
-
-/* void main()  // main da eliminare
-{
-    int scelta; //scelta dal menù
-    char destinazione;
-    char citta_partenza[20];
-    char citta_economica[20];
-    char* p;
-
-
-    grafo*g=nuovo_grafo();
-    inizializza(g);
-    printf("*****");
-   stampa_grafo(g);
-
-    while(1)
-    {
-        stampa_menu();
-        scelta=richiedi_intero();
-
-        system("cls");
-
-        switch (scelta)
-        {
-        case 1:
-            stampa_grafo(g);
-            continua();
-            system("cls");
-            break;
-        case 2:
-            break;
-        case 3:
-            printf("\nInserire la citta' di partenza: ");
-            scanf("%s", citta_partenza);
-            p=normalizza_parola(citta_partenza);
-            printf("\nVuoi inserire la destinazione? S/N");
-            scanf("%c", &destinazione);
-            if(destinazione == 'S')
-            {
-
-            }
-            else if(destinazione =='N')
-            {
-                printf("\nDa %s la tratta piu' economica e' %s, approfittane!", citta_partenza, tratta_economica(g, citta_partenza));
-            }
-            continua();
-            system("cls");
-            break;
-        case 4:
-            printf("\nArrivederci!");
-            exit(0);
-            break;
+	int res = 0;
+	dim = i;
+	for (i = 0; i < dim; i++) //controllo riga per riga se i dati sono presenti nel file
+		if (strcmp(utente, lettura[i]) == 0){
+            res = 1;
+            return res;
         }
-    }
 
+	  return res;
 
-//    stampa_grafo(g);
-//    printf("\n\n*** FINE ***");
 }
-*/
+
+void registra_utente(char utente[]){
+    FILE *fp;
+    fp=fopen("utenti.txt","a"); //apro il file
+    if(fp){
+            fprintf(fp, "%s %d\n", utente, 0);
+    }else{
+        printf("\nErrore nella scrittura del file utenti.txt!\n");
+    }
+    fclose(fp);
+}
+
+void registra_prenotazione(char utente[], char citta_partenza[], char citta_arrivo[]){
+    FILE *fp;
+    fp=fopen("prenotazioni.txt","a"); //apro il file
+    if(fp){
+            fprintf(fp, "%s %s %s\n", utente, citta_partenza, citta_arrivo);
+    }else{
+        printf("\nErrore nella scrittura del file prenotazioni.txt!\n");
+    }
+    fclose(fp);
+}
+
+prenotazioni* attive(char utente[], prenotazioni* p){
+
+	int i=0,j=0;
+	FILE *fp;
+	char lettura[20][20];
+	int dim;
+
+	fp=fopen("prenotazioni.txt","r"); //apro il file in lettura
+	if(fp){
+		while(!feof(fp)){
+
+			fscanf(fp, "%s", lettura[i]);
+			i++;
+
+		}//fine while della lettura file
+
+	}else{
+		printf("Errore apertura file!");
+	 }//fine controllo esistenza file
+
+	fclose(fp);
 
 
-void main()
-{
-    int scelta;
-    char scelta_Y_N;
-    char citta_partenza[30];
-    char citta_arrivo[30];
-    char citta_economica[30]; // ???
-    char* p;   // ????
-
-    grafo*g=nuovo_grafo();
-    inizializza(g);
-
-    while(1)
-    {
-        stampa_menu();
-        scelta=richiedi_intero();
-        system("cls");
-
-        switch (scelta)
-        {
-        case 1:
-            stampa_grafo(g);
-            continua();
-            break;
-        case 2:
-            break;
-        case 3:
-            printf("\nInserire la citta' di partenza: ");
-            richiedi_nome_citta(citta_partenza);
-            if(cerca_vertice(g->lista, citta_partenza)==NULL)
-                errore("la citta non esiste.");
-
-            printf("\nVuoi inserire una destinazione ? ");
-            scelta_Y_N=richiedi_Y_N();
-            if(scelta_Y_N == 'Y')
-            {
-                richiedi_nome_citta(citta_arrivo);
-                if(!cerca_vertice(g->lista, citta_arrivo))
-                {
-                    printf("\nCitta' non trovata.");
-                }
-
-                // continua...
-
-            } // FINE YES
-            else if(scelta_Y_N == 'N')
-            {
-                do
-                {
-                    printf("\nCosa vuoi sapere : \n1->meta piu' econimica\n2->meta piu' gettonata\n0->annulla\n> ");
-                    scelta=richiedi_intero();
-                    switch(scelta)
-                    {
-                    case 0:
-                        break;
-                    case 1:
-                        meta_piu_econimica(g, citta_partenza);
-                        break;
-                    case 2:
-                        //meta_piu_gettonata()
-                        break;
-                    default:
-                        printf("\nScelta non valida ! ");
-                        continue;
-                    }
-                    break;
-                }
-                while (1);
-            }
-
-            continua();
-            break;
-        case 4:
-            printf("\nArrivederci!");
-            exit(0);
-            break;
+	int res = 0;
+	dim = i;
+	for (i = 0; i < dim; i++){ //controllo riga per riga se i dati sono presenti nel file
+		if (strcmp(utente, lettura[i]) == 0){
+            p = aggiungi_prenotazione(p,lettura[i+1],lettura[i+2]);
         }
-    }
+	}
 
-    printf("\n\n*** FINE ***");
-    return;
+    return p;
 }
-

@@ -1,9 +1,14 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include<ctype.h>
 
-//************************ tipi*********************************
+
+typedef struct prenotazioni{
+    char citta_partenza[20];
+    char citta_arrivo[20];
+    struct prenotazioni* next;
+}prenotazioni;
+
 typedef struct arco
 {
     char citta_arrivo[30];
@@ -24,26 +29,6 @@ typedef struct grafo
     int nv;        // numero vertici
     vertice*lista; // puntatore al primo vertice
 } grafo;
-
-typedef struct utente
-{
-    char username[20];
-    char password[20];
-    int punti;
-    char nome[20];
-    char cognome[20];
-
-} utente;
-
-
-//***************************** PROTOTIPI   *****************************************
-
-
-
-void nuovo_arco(grafo*g,char citta_partenza[30], char citta_arrivo[30], int distanza, float costo);
-
-
-
 
 
 void errore(char messaggio[50])
@@ -70,12 +55,13 @@ grafo*nuovo_grafo()  // si alloca un nuovo grafo, senza vertici e senza archi
 
 void stampa_grafo(grafo*g)
 {
+    // da finire
     vertice*tmpV=g->lista;
     arco*tmpA;
     printf("\nPartenze:\t\t\tDestinazioni\n\n");
     while(tmpV)
     {
-        printf("\n %-30s ", tmpV->citta);
+        printf("\n %s :\t\t\t", tmpV->citta);
         tmpA=tmpV->next_arco;
         while(tmpA)
         {
@@ -89,6 +75,7 @@ void stampa_grafo(grafo*g)
 
 
 //************************************** gestione liste *****************************
+
 //************** vertice *************************
 vertice* crea_vertice(char citta[30])
 {
@@ -134,6 +121,8 @@ void nuovo_vertice(grafo*g, char citta[30])
 }
 
 
+
+
 //********************* ARCO ***********************************
 arco* crea_arco(char citta_arrivo[30], int distanza, float costo)
 {
@@ -150,25 +139,25 @@ arco* crea_arco(char citta_arrivo[30], int distanza, float costo)
     return a;
 }
 
-void inserisci_arco_in_coda(vertice*vert, arco*a)
+void inserisci_arco_in_coda(vertice*vert, arco*a)  //  <<<<<< FUNZIONE SBAGLIATA <<<<<
 {
-    if(vert->next_arco == NULL )
-    {
-        vert->next_arco=a;
-    }
-    else
-    {
-        arco*tmp=vert->next_arco;
-        while(tmp->next_arco)
-        {
-            tmp=tmp->next_arco;
-        }
-        tmp->next_arco=a;
-    }
+   if(vert->next_arco == NULL )
+   {
+       vert->next_arco=a;
+   }
+   else
+   {
+       arco*tmp=vert->next_arco;
+       while(tmp->next_arco)
+       {
+           tmp=tmp->next_arco;
+       }
+       tmp->next_arco=a;
+   }
 
 }
 
-vertice* cerca_vertice(vertice*lista, char citta[30])
+vertice* cerca_vertice(vertice*lista, char citta[30])  // ?????
 {
     vertice*v=lista;
     if(v != NULL && strcmp(v->citta, citta) != 0  ) // non trovato
@@ -194,109 +183,113 @@ void nuovo_arco(grafo*g,char citta_partenza[30], char citta_arrivo[30], int dist
 
 }
 
+arco* cerca_arco(vertice* v, char citta[]){
+    arco*tmpA;
 
-
-
-
-//******************************* FILE *******************************
-
-void leggi_file_vertici(grafo*g)
-{
-    char citta[30];
-    FILE*fp=fopen("Vertici.txt", "r");
-    if(!fp)
-        errore("impossibile aprire il file vertici.");
-
-    while(!feof(fp))
-    {
-        fscanf(fp, "%30s\n", &citta);
-        nuovo_vertice(g, citta);
+    if(v){
+        tmpA=v->next_arco;
+                while(tmpA)
+        {
+            if(strcmp(tmpA->citta_arrivo,citta)==0){
+                return tmpA;
+            }
+            tmpA=tmpA->next_arco;
+        }
     }
-    fclose(fp);
 }
 
-
-
-
-void leggi_file_archi(grafo*g)
-{
-    int distanza;
-    float costo;
-    char citta_partenza[30], citta_arrivo[30];
-    FILE*fp=fopen("Archi.txt", "r");
-    if(!fp)
-        errore("impossibile aprire il file archi.");
-    while(!feof(fp))
-    {
-        fscanf(fp, "%30s %30s %f %d\n", citta_partenza,citta_arrivo, &costo, &distanza );
-        nuovo_arco(g, citta_partenza, citta_arrivo, distanza, costo );
-    }
-    fclose(fp);
-}
-
-void leggi_file_utenti(char username[], char password[])
-{
-
-}
-
-
-//**********+
 //TRATTA ECONOMICA
-char* meta_economica(grafo* g, char citta_partenza[], char* p)
-{
+char* meta_economica(grafo* g, char citta_partenza[], char* p){
 
     int minimo = 1000.0;
     vertice*tmpV=g->lista;
 
     tmpV=cerca_vertice(g->lista,citta_partenza);
-    if(tmpV != NULL)
-    {
+    if(tmpV != NULL){
         arco*tmpA;
+        tmpA=tmpV->next_arco;
+            while(tmpA)
+            {
+                if(minimo > tmpA->costo){
+                    minimo = tmpA->costo;
+                    strcpy(p, tmpA->citta_arrivo);
+                }
+                tmpA=tmpA->next_arco;
+            }
+
+            return p;
+    }
+}
+
+int grado_vertice(grafo*g, char citta[])
+{
+    vertice*tmpV=g->lista;
+    arco*tmpA;
+    int occorrenze = 0;
+    while(tmpV)
+    {
         tmpA=tmpV->next_arco;
         while(tmpA)
         {
-            if(minimo > tmpA->costo)
-            {
-                minimo = tmpA->costo;
-                strcpy(p, tmpA->citta_arrivo);
+            if(strcmp(tmpA->citta_arrivo,citta) == 0){
+                occorrenze++;
             }
             tmpA=tmpA->next_arco;
         }
-
-        return p;
+        tmpV=tmpV->next_vertice;
     }
+    free(tmpV);
+    return occorrenze;
 }
 
+/*PRENOTAZIONI*/
+prenotazioni* inizializza_prenotazioni(char citta_partenza[], char citta_arrivo[]) {
+    prenotazioni* p = malloc(sizeof(struct prenotazioni));
+    strcpy(p->citta_partenza, citta_partenza);
+    strcpy(p->citta_arrivo, citta_arrivo);
+    p->next = NULL;
+    return p;
+}
 
-arco* meta_piu_econimica(grafo*g, char citta_partenza[])
-{
-    if(!g || g->nv==0)
-    {
-        errore("nessuna citta' disponibile");
-    }
-    vertice*vert=cerca_vertice(g->lista, citta_partenza);
-    if(!vert)
-    {
-        errore("citta' non trovata.");
-    }
-    if(vert->next_arco==NULL)
-    {
-        errore("nessun aereo disponibile.");
-    }
-    arco*minimo=vert->next_arco;
-    arco*tmp=vert->next_arco;
-    while(tmp)
-    {
-        if(tmp->costo < minimo->costo)
-        {
-            minimo=tmp;
+prenotazioni* aggiungi_prenotazione(prenotazioni* p, char citta_partenza[], char citta_arrivo[]){
+
+    if(p != NULL){
+        if (strcmp(p->citta_partenza, citta_partenza) != 0 || strcmp(p->citta_arrivo, citta_arrivo) != 0){
+            p->next = aggiungi_prenotazione(p->next, citta_partenza, citta_arrivo);
         }
-        tmp=tmp->next_arco;
+    }else{
+        p=inizializza_prenotazioni(citta_partenza, citta_arrivo);
     }
-
-    printf("\nLa meta piu' econimica che si puo' raggiungere e' : %s  con un costo di %.2f Euro", minimo->citta_arrivo, minimo->costo);
-    return minimo;
+    return p;
 }
 
+prenotazioni* testa(prenotazioni* p, char citta_partenza[], char citta_arrivo[]) {
+    if (p != NULL) {
+        prenotazioni* G = malloc(sizeof(struct prenotazioni));
+        strcpy(p->citta_partenza, citta_partenza);
+        strcpy(p->citta_arrivo, citta_arrivo);
+        G->next = p;
+        return G;
+    }
+    return inizializza_prenotazioni(citta_partenza, citta_arrivo);
+}
 
+prenotazioni* rimuovi_prenotazione(prenotazioni* p, char citta_partenza[], char citta_arrivo[]){
+    if (p != NULL) {
+        if (strcmp(p->citta_partenza, citta_partenza) != 0 || strcmp(p->citta_arrivo, citta_arrivo) != 0) {
+            prenotazioni* tmp = p->next;
+            free(p);
+            return tmp;
+        }
+        p->next = rimuovi_prenotazione(p,citta_partenza,citta_arrivo);
+    }
+    return p;
+}
+
+void stampa_prenotazioni(prenotazioni* p) {
+    if (p != NULL) {
+        printf("\ncitta' di partenza: %s\ncitta di arrivo: %s\n", p->citta_partenza, p->citta_arrivo);
+        stampa_prenotazioni(p->next);
+    }
+}
 

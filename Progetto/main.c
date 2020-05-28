@@ -11,6 +11,7 @@
 
 void main()
 {
+
     int scelta; //scelta dal menù
     int scelta_login;
     char destinazione;

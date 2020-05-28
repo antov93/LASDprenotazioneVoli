@@ -377,7 +377,7 @@ int conferma_login(char utente[])
 void registra_utente(char utente[])
 {
     FILE *fp;
-    fp=fopen("Utenti.txt","a"); //apro il file
+    fp=fopen("Utenti.txt","a+t"); //apro il file
     if(fp)
     {
         fprintf(fp, "%s %d\n", utente, 0);
@@ -684,6 +684,20 @@ int richiedi_intero()
     return valore;
 }
 
+
+float richiedi_float()
+{
+    float valore;
+    while(scanf("%d", &valore)!= 1)
+    {
+        printf("\nValore non valido. Inserirne un altro.");
+        fflush(stdin);
+    }
+    return valore;
+}
+
+
+
 void richiedi_nome_citta(char nome[])
 {
     printf("\n> ");
@@ -710,3 +724,36 @@ char richiedi_Y_N()
 }
 
 //***********************************************************************************
+//*************************  lato amministratore ************************************
+
+void nuova_tratta(grafo*g)
+{
+    char citta_partenza[30], citta_arrivo[30];
+    int distanza;
+    float costo;
+
+    printf("\nInserire citta' di partenza : ");
+    richiedi_nome_citta(citta_partenza);
+    printf("\nInserire citta' di arrivo : ");
+    richiedi_nome_citta(citta_arrivo);
+    printf("\nInserire distanza : ");
+    distanza=richiedi_intero();
+    printf("\nInserire costo : ");
+    costo=richiedi_float();
+
+    nuovo_arco(g, citta_partenza, citta_arrivo, distanza, costo);
+
+}
+
+void nuova_citta(grafo*g)
+{
+    char nome_citta[30];
+    printf("\nInserire nome citta' : ");
+    richiedi_nome_citta(nome_citta);
+
+    nuovo_vertice(g, nome_citta);
+}
+
+//**************************************************************************************
+
+

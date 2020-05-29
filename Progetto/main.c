@@ -14,7 +14,10 @@ void main()
 
     int scelta; //scelta dal menù
     int scelta_login;
+    int distanza;
+    float costo;
     char destinazione;
+    char sconto;
     char citta_partenza[20];
     char citta_economica[20];
     char citta_arrivo[20];
@@ -31,10 +34,12 @@ void main()
     inizializza(g);
 
 while(confermato != 1){
-    printf("\nLOGIN");
+    printf("LOGIN");
     printf("\n1.Effettua il login");
     printf("\n2.Registrati");
-    printf("\n3.Entra come visitatore\n");
+    printf("\n3.Entra come visitatore");
+    printf("\n4.Entra come amministratore");
+    printf("\n5.ESCI\n");
     scanf("%d", &scelta_login);
 
     if(scelta_login == 1){
@@ -74,6 +79,25 @@ while(confermato != 1){
         } //fine while
     }else if(scelta_login == 3){
         confermato = 1;
+    }else if(scelta_login == 4){
+        printf("\nInserire username: \n");
+        scanf("%s", username);
+        k = strlen(username);
+        username[k] = '-';
+        username[k+1] = '\0';
+        printf("\nInserire password: \n");
+        scanf("%s", password);
+        strcat(username,password);
+        confermato = conferma_amministratore(username);
+        if(confermato == 0){
+            printf("\nDati errati, riprova!");
+        }else{
+            printf("\nDati corretti!");
+        }
+    }else if(scelta_login == 5){
+        system("cls");
+        printf("\nArrivederci!");
+        exit(0);
     }
 
     continua();
@@ -143,6 +167,21 @@ if(scelta_login == 3){
                         scanf("%s", citta_arrivo);
                         normalizza_parola(citta_arrivo);
                         if(cerca_arco(cerca_vertice(g->lista,citta_partenza),citta_arrivo)){
+                            printf("\nIl costo del biglietto e' %.2f€", cerca_arco(cerca_vertice(g->lista,citta_partenza),citta_arrivo)->costo);
+                            if(punteggio_corrente(username) > 0){
+                                printf("\nHai %d crediti bonus, vuoi utilizzarli per avere uno sconto sul biglietto? Y/N\n", punteggio_corrente(username));
+                                scanf(" %c", &sconto);
+                                sconto = toupper(sconto);
+
+                                if(sconto == 'Y'){
+                                    decrementa_punteggio(username,cerca_arco(cerca_vertice(g->lista,citta_partenza),citta_arrivo)->costo);
+                                }else if(sconto == 'N'){
+                                    incrementa_punteggio(username,cerca_arco(cerca_vertice(g->lista,citta_partenza),citta_arrivo)->costo);
+                                }
+                            }else{
+                                incrementa_punteggio(username,cerca_arco(cerca_vertice(g->lista,citta_partenza),citta_arrivo)->costo);
+                            }
+
                             registra_prenotazione(username, citta_partenza,citta_arrivo);
                         }else{
                             printf("\nNon esistono voli da %s a %s!", citta_partenza, citta_arrivo);
@@ -160,101 +199,52 @@ if(scelta_login == 3){
                 break;
         }
     }
-} //fine if-else
-}
+}else if(scelta_login == 4){
+        while(1){
+            printf("\nSELEZIONA UN OPZIONE\n");
+            printf("\n1.Visualizza i voli");
+            printf("\n2.Aggiungi sito");
+            printf("\n3.Aggiungi volo a sito");
+            printf("\n4.ESCI\n");
 
+            scanf("%d", &scelta);
+            system("cls");
 
-/*
-
-int conferma_login(char utente[]){
-
-	int i=0,j=0;
-	FILE *fp;
-	char lettura[20][20];
-	int dim;
-
-	fp=fopen("utenti.txt","r"); //apro il file in lettura
-	if(fp){
-		while(!feof(fp)){
-
-			fscanf(fp, "%s", lettura[i]);
-			i++;
-
-		}//fine while della lettura file
-
-	}else{
-		printf("Errore apertura file!");
-	 }//fine controllo esistenza file
-
-	fclose(fp);
-
-
-	int res = 0;
-	dim = i;
-	for (i = 0; i < dim; i++) //controllo riga per riga se i dati sono presenti nel file
-		if (strcmp(utente, lettura[i]) == 0){
-            res = 1;
-            return res;
+             switch (scelta){
+                case 1:
+                     stampa_grafo(g);
+                     continua();
+                     break;
+                case 2:
+                     printf("\nInserire nome di citta': ");
+                     scanf("%s", citta_partenza);
+                     normalizza_parola(citta_partenza);
+                     nuovo_vertice(g,citta_partenza);
+                     continua();
+                     break;
+                case 3:
+                     printf("\nInserire nome di citta' di partenza: ");
+                     scanf("%s", citta_partenza);
+                     normalizza_parola(citta_partenza);
+                     if(cerca_vertice(g->lista,citta_partenza)){
+                        printf("\nInserire citta' di arrivo: ");
+                        scanf("%s", citta_arrivo);
+                        normalizza_parola(citta_arrivo);
+                        printf("\nInserire costo biglietto da %s a %s: ", citta_partenza, citta_arrivo);
+                        scanf("%f", &costo);
+                        printf("\nInserire distanza in chilometri tra %s e %s: ", citta_partenza, citta_arrivo);
+                        scanf("%d", &distanza);
+                        nuovo_arco(g,citta_partenza,citta_arrivo,distanza,costo);
+                     }else{
+                        printf("\nLa citta' %s non e' registrata nel database!", citta_partenza);
+                     }
+                     continua();
+                     break;
+                case 4:
+                    printf("\nArrivederci!");
+                    exit(0);
+                    break;
+            }
         }
-
-	  return res;
-
-}
-
-void registra_utente(char utente[]){
-    FILE *fp;
-    fp=fopen("utenti.txt","a"); //apro il file
-    if(fp){
-            fprintf(fp, "%s %d\n", utente, 0);
-    }else{
-        printf("\nErrore nella scrittura del file utenti.txt!\n");
-    }
-    fclose(fp);
-}
-
-void registra_prenotazione(char utente[], char citta_partenza[], char citta_arrivo[]){
-    FILE *fp;
-    fp=fopen("prenotazioni.txt","a"); //apro il file
-    if(fp){
-            fprintf(fp, "%s %s %s\n", utente, citta_partenza, citta_arrivo);
-    }else{
-        printf("\nErrore nella scrittura del file prenotazioni.txt!\n");
-    }
-    fclose(fp);
-}
-
-prenotazioni* attive(char utente[], prenotazioni* p){
-
-	int i=0,j=0;
-	FILE *fp;
-	char lettura[20][20];
-	int dim;
-
-	fp=fopen("prenotazioni.txt","r"); //apro il file in lettura
-	if(fp){
-		while(!feof(fp)){
-
-			fscanf(fp, "%s", lettura[i]);
-			i++;
-
-		}//fine while della lettura file
-
-	}else{
-		printf("Errore apertura file!");
-	 }//fine controllo esistenza file
-
-	fclose(fp);
-
-
-	int res = 0;
-	dim = i;
-	for (i = 0; i < dim; i++){ //controllo riga per riga se i dati sono presenti nel file
-		if (strcmp(utente, lettura[i]) == 0){
-            p = aggiungi_prenotazione(p,lettura[i+1],lettura[i+2]);
-        }
-	}
-
-    return p;
-}
-
-*/
+    } //fine if-else
+} //fine main()

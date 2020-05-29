@@ -341,7 +341,48 @@ int conferma_login(char utente[])
     char lettura[20][20];
     int dim;
 
-    fp=fopen("utenti.txt","r"); //apro il file in lettura
+    fp=fopen("Utenti.txt","r"); //apro il file in lettura
+    if(fp)
+    {
+        while(!feof(fp))
+        {
+
+            fscanf(fp, "%s", lettura[i]);
+            i++;
+
+        }//fine while della lettura file
+
+    }
+    else
+    {
+        printf("Errore apertura file!");
+    }//fine controllo esistenza file
+
+    fclose(fp);
+
+
+    int res = 0;
+    dim = i;
+    for (i = 0; i < dim; i++) //controllo riga per riga se i dati sono presenti nel file
+        if (strcmp(utente, lettura[i]) == 0)
+        {
+            res = 1;
+            return res;
+        }
+
+    return res;
+
+}
+
+int conferma_amministratore(char utente[])
+{
+
+    int i=0,j=0;
+    FILE *fp;
+    char lettura[20][20];
+    int dim;
+
+    fp=fopen("Amministratori.txt","r"); //apro il file in lettura
     if(fp)
     {
         while(!feof(fp))
@@ -384,10 +425,11 @@ void registra_utente(char utente[])
     }
     else
     {
-        printf("\nErrore nella scrittura del file utenti.txt!\n");
+        printf("\nErrore nella scrittura del file Utenti.txt!\n");
     }
     fclose(fp);
 }
+
 
 void registra_prenotazione(char utente[], char citta_partenza[], char citta_arrivo[])
 {
@@ -417,7 +459,6 @@ prenotazioni* attive(char utente[], prenotazioni* p)
     {
         while(!feof(fp))
         {
-
             fscanf(fp, "%s", lettura[i]);
             i++;
 
@@ -431,9 +472,8 @@ prenotazioni* attive(char utente[], prenotazioni* p)
 
     fclose(fp);
 
-
     int res = 0;
-    dim = i;
+    dim = i-1;
     for (i = 0; i < dim; i++)  //controllo riga per riga se i dati sono presenti nel file
     {
         if (strcmp(utente, lettura[i]) == 0)
@@ -615,7 +655,7 @@ void leggi_file_vertici(grafo*g)
 
     while(!feof(fp))
     {
-        fscanf(fp, "%30s\n", &citta);
+        fscanf(fp, "%s\n", &citta);
         nuovo_vertice(g, citta);
     }
     fclose(fp);
@@ -631,7 +671,7 @@ void leggi_file_archi(grafo*g)
         errore("impossibile aprire il file archi.");
     while(!feof(fp))
     {
-        fscanf(fp, "%30s %30s %f %d\n", citta_partenza,citta_arrivo, &costo, &distanza );
+        fscanf(fp, "%30s %30s %d %f\n", citta_partenza,citta_arrivo, &distanza, &costo  );
         nuovo_arco(g, citta_partenza, citta_arrivo, distanza, costo );
     }
     fclose(fp);
@@ -657,6 +697,7 @@ void inizializza(grafo* g)
 
 void continua()
 {
+    printf("\n\n");
     system("PAUSE");
     system("cls");
 }
@@ -756,4 +797,104 @@ void nuova_citta(grafo*g)
 
 //**************************************************************************************
 
+void incrementa_punteggio(char username[], float costo){
+    int i=0;
+	FILE *fp;
+	char lettura[20][20];
+	int dim; //dimensione file
+
+
+	fp=fopen("Utenti.txt","r"); //apro il file in lettura
+	if(fp){
+		while(!feof(fp)){
+
+			fscanf(fp, "%s", lettura[i]);
+            i++;
+		}//fine while della lettura file
+
+	}else{
+		printf("Errore apertura file!");
+	 }//fine controllo esistenza file
+
+	fclose(fp);
+
+	dim = i-1;
+	fp=fopen("Utenti.txt","w"); //apro il file
+    if(fp){
+            for(i=0; i<dim; i=i+2){
+                if(strcmp(username,lettura[i])==0){
+                    fprintf(fp, "%s %d\n", lettura[i], (atoi(lettura[i+1])) + (int)costo);
+                }else{
+                    fprintf(fp, "%s %s\n", lettura[i], lettura[i+1]);
+                }
+            }
+    }else{
+        printf("\nErrore nella scrittura del file Utenti.txt!\n");
+    }
+    fclose(fp);
+}
+
+void decrementa_punteggio(char username[], float costo){
+    int i=0;
+	FILE *fp;
+	char lettura[20][20];
+	int dim; //dimensione file
+
+	fp=fopen("Utenti.txt","r"); //apro il file in lettura
+	if(fp){
+		while(!feof(fp)){
+
+			fscanf(fp, "%s", lettura[i]);
+            i++;
+		}//fine while della lettura file
+
+	}else{
+		printf("Errore apertura file!");
+	 }//fine controllo esistenza file
+
+	fclose(fp);
+
+	dim = i-1;
+	fp=fopen("Utenti.txt","w"); //apro il file
+    if(fp){
+            for(i=0; i<dim; i=i+2){
+                if(strcmp(username,lettura[i])==0){
+                    fprintf(fp, "%s %d\n", lettura[i], (atoi(lettura[i+1])) - (int)costo);
+                }else{
+                    fprintf(fp, "%s %s\n", lettura[i], lettura[i+1]);
+                }
+            }
+    }else{
+        printf("\nErrore nella scrittura del file Utenti.txt!\n");
+    }
+    fclose(fp);
+}
+
+int punteggio_corrente(char utente[]){
+        int i=0;
+	FILE *fp;
+	char lettura[20][20];
+	int dim; //dimensione file
+
+	fp=fopen("Utenti.txt","r"); //apro il file in lettura
+	if(fp){
+		while(!feof(fp)){
+
+			fscanf(fp, "%s", lettura[i]);
+            i++;
+		}//fine while della lettura file
+
+	}else{
+		printf("Errore apertura file!");
+	 }//fine controllo esistenza file
+
+	fclose(fp);
+
+	dim = i-1;
+    for(i=0; i<dim; i=i+2){
+        if(strcmp(utente,lettura[i])==0){
+            return atoi(lettura[i+1]);
+        }
+    }
+}
 

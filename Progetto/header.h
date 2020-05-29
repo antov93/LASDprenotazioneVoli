@@ -688,7 +688,7 @@ int richiedi_intero()
 float richiedi_float()
 {
     float valore;
-    while(scanf("%d", &valore)!= 1)
+    while(scanf("%f", &valore)!= 1)
     {
         printf("\nValore non valido. Inserirne un altro.");
         fflush(stdin);

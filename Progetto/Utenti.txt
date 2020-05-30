@@ -1,2 +1,5 @@
 valerio-panzera -60
 daniele-pan 0
+antov-ciao 80
+a-a 0
+anto-anto 20

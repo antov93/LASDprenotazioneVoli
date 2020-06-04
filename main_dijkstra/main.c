@@ -152,8 +152,6 @@ void minimizza_adiacenti(grafo*g, vertice* v, int pesi[], int visitati[]) // OK 
     visitati[v->indice_vertice]=1;
     vertice*tmpV;
 
-    printf("\nARRAY -VISITATI ");
-    stampa_array(visitati,g->nv);
     while(tmpA)
     {
         tmpV=cerca_vertice(g->lista,tmpA->citta_arrivo );
@@ -248,7 +246,7 @@ void main()
     printf("\n... calcolo ...\n");
 
 
-    int peso=prova_dijkstra(g, "Napoli", "York");
+    int peso=prova_dijkstra(g, "Napoli", "New_York");
     printf("\n********************** risultato ***********************\n");
     switch(peso)
     {

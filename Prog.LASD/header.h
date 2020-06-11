@@ -1075,7 +1075,7 @@ void visualizza_opzioni_voli(grafo*g, utente*u, prenotazione**lista_prenotazioni
 
     pulisci_schermo();
     stampa_grafo(g);
-    printf("Inserire citta' partenza : ");
+    printf("\nInserire citta' partenza : ");
     richiedi_nome_citta(partenza);
     if(cerca_vertice(g->lista, partenza)==NULL)
     {

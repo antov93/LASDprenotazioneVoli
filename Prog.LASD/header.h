@@ -288,7 +288,6 @@ vertice* crea_vertice(char citta[30])  //alloca memoria per un vertice
     vertice*v=(vertice*)malloc(sizeof(vertice));
     if(!v)
         errore("vertice non creato.");
-
     else
     {
         v->next_vertice=NULL;

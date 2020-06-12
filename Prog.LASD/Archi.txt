@@ -2,6 +2,8 @@ Napoli Roma 200 20.0
 Roma Napoli 200 20.0
 Napoli Milano 700 50.0
 Milano Napoli 700 50.0
+Napoli Montecarlo 4250 400.0
+Montecarlo Napoli 4250 400.0
 Verona Barcellona 1100 100.0
 Barcellona Verona 1100 100.0
 Helsinki Montecarlo 2800 200.0

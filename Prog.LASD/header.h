@@ -288,7 +288,6 @@ vertice* crea_vertice(char citta[30])  //alloca memoria per un vertice
     vertice*v=(vertice*)malloc(sizeof(vertice));
     if(!v)
         errore("vertice non creato.");
-
     else
     {
         v->next_vertice=NULL;
@@ -514,7 +513,7 @@ arco* meta_piu_econimica(grafo*g, char citta_partenza[])
 char*meta_piu_gettonata(grafo*g, prenotazione*lista_prenotazioni)
 {
     int num_prenotazioni[g->nv];
-    int max=0; // indice della citta più gettonata
+    int max=0; // indice della citta piÃ¹ gettonata
     prenotazione*tmp = lista_prenotazioni;
     vertice*v;
 
@@ -527,7 +526,7 @@ char*meta_piu_gettonata(grafo*g, prenotazione*lista_prenotazioni)
     for(int i=0; i<g->nv; i++) // inizializza le celle del vettore a 0
         num_prenotazioni[i]=0;
 
-    while(tmp) // scorre tutte le prenotazioni e in base all'indice di ogni città destinazione aumenta di uno la cella del vettore
+    while(tmp) // scorre tutte le prenotazioni e in base all'indice di ogni cittÃ  destinazione aumenta di uno la cella del vettore
     {
         v=cerca_vertice(g->lista, tmp->citta_arrivo);
         num_prenotazioni[v->indice_vertice]++;
@@ -1074,7 +1073,8 @@ void visualizza_opzioni_voli(grafo*g, utente*u, prenotazione**lista_prenotazioni
 
 
     pulisci_schermo();
-    printf("Inserire citta' partenza : ");
+    stampa_grafo(g);
+    printf("\nInserire citta' partenza : ");
     richiedi_nome_citta(partenza);
     if(cerca_vertice(g->lista, partenza)==NULL)
     {

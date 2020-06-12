@@ -260,10 +260,10 @@ void stampa_grafo(grafo*g)
 {
     vertice*tmpV=g->lista;
     arco*tmpA;
-    printf("Partenze:\t\t\tDestinazioni\n");
+    printf("Partenze:\t\t\tDestinazioni:\n");
     while(tmpV)
     {
-        printf("\n %-30s [index: %d] ", tmpV->citta, tmpV->indice_vertice);
+        printf("\n %-30s [indice: %d] ", tmpV->citta, tmpV->indice_vertice);
         tmpA=tmpV->next_arco;
         while(tmpA)
         {
@@ -368,7 +368,6 @@ int rimuovi_vertice(vertice**lista, char nome_citta[])
         return controllo;
     if(strcmp( (*lista)->citta, nome_citta) == 0   )  // rimuove il vertice e tutti isuoi archi
     {
-        printf("<<<<trovato**");
         vertice*del=*lista;
         while(del->next_arco)
             rimuovi_arco(&del->next_arco, del->next_arco->citta_arrivo);
@@ -1257,7 +1256,7 @@ void acquista_biglietto(utente*u, prenotazione**lista_prenotazioni, char citta_p
 
         if(scelta==1)
         {
-            while (costo>0 && u->punti>10)
+            while (costo>0 && u->punti>=10)
             {
                 u->punti-=10;
                 costo-=1;
@@ -1345,7 +1344,6 @@ void scrivi_file_vertici(grafo*g)
         printf("\nImpossibile aprire file vertici.");
         return;
     }
-    printf("\n*** salvo file vertici***\n");
     vertice*tmp=g->lista;
     while(tmp)
     {
@@ -1364,7 +1362,6 @@ void scrivi_file_archi(grafo*g)
         printf("\nImpossibile aprire file vertici.");
         return;
     }
-    printf("\n*** salvo file archi***\n");  //<<<<<<<<<<<<<<<
     vertice*tmpV=g->lista;
     arco*tmpA=tmpV->next_arco;
     while(tmpV)
